@@ -11,4 +11,4 @@ Broneeringu detailid:
 <br/>
 <a href="{$ScriptUrl}/{$ReservationUrl}">Vaata seda broneeringut</a> |
 <a href="{$ScriptUrl}/{$ICalUrl}">Lisa kalendrisse</a> |
-<a href="{$ScriptUrl}">Logi sisse Rannahalli kalendrisse</a>
+<a href="{$ScriptUrl}">Logi sisse kalendrisse</a>
