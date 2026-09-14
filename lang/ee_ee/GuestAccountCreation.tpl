@@ -1,5 +1,5 @@
-<p>Oled loonud konto järgmiste andmetega:<br/>
-Email: {$EmailAddress}<br/>
-Parool: {$Password|escape:'html'}<br/>
+<p>Olete loonud uue {$AppTitle} konto järgmiste andmetega:<br/>
+E-post: {$EmailAddress}<br/>
+Parool: {$Password}<br/>
 
-<a href="{$ScriptUrl}">Logi sisse, et näha oma broneeringuid ja hallata kontot</a>
+<a href="{$ScriptUrl}">Logi sisse oma broneeringute vaatamiseks ja konto haldamiseks</a>
