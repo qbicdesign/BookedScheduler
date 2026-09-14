@@ -1,81 +1,121 @@
-	Broneeringu detailid:
+<p><strong>Broneeringu andmed:</strong></p>
+
+<p>
+	<strong>Kasutaja:</strong> {$UserName}<br/>
+    {if !empty($CreatedBy)}
+		<strong>Looja:</strong>
+        {$CreatedBy}
+		<br/>
+    {/if}
+	<strong>Algus:</strong> {formatdate date=$StartDate key=reservation_email}<br/>
+	<strong>Lõpp:</strong> {formatdate date=$EndDate key=reservation_email}<br/>
+	<strong>Pealkiri:</strong> {$Title}<br/>
+	<strong>Kirjeldus:</strong> {$Description|nl2br}
+    {if $Attributes|default:array()|count > 0}
 	<br/>
+    {foreach from=$Attributes item=attribute}
+	<div>{control type="AttributeControl" attribute=$attribute readonly=true}</div>
+    {/foreach}
+{/if}
+</p>
+
+<p>
+    {if $ResourceNames|default:array()|count > 1}
+		<strong>Ressursid:</strong>
+		<br/>
+        {foreach from=$ResourceNames item=resourceName}
+            {$resourceName}
+			<br/>
+        {/foreach}
+    {else}
+		<strong>Ressurss:</strong>
+        {$ResourceName}
+    {/if}
+</p>
+
+{if $ResourceImage}
+	<div class="resource-image"><img alt="{$ResourceName}" src="{$ScriptUrl}/{$ResourceImage}"/></div>
+{/if}
+
+
+{if $RequiresApproval}
+	<p>* Vähemalt üks broneeritud ressurssidest vajab enne kasutamist kinnitamist. Palun veenduge, et see broneeringupäring kinnitatakse või lükatakse tagasi. *</p>
+{/if}
+
+{if $CheckInEnabled}
+	<p>
+		Vähemalt üks broneeritud ressurssidest nõuab, et kasutaja registreeriks sisse ja välja.
+        {if $AutoReleaseMinutes != null}
+			See broneering tühistatakse, kui kasutaja ei registreeri sisse {$AutoReleaseMinutes} minuti jooksul pärast kavandatud algusaega.
+        {/if}
+	</p>
+{/if}
+
+{if count($RepeatRanges) gt 0}
+	<p>
+		Broneering toimub järgmistel kuupäevadel ({$RepeatRanges|default:array()|count}):
+		<br/>
+        {foreach from=$RepeatRanges item=date name=dates}
+            {formatdate date=$date->GetBegin()}
+            {if !$date->IsSameDate()} - {formatdate date=$date->GetEnd()}{/if}
+			<br/>
+        {/foreach}
+	</p>
+{/if}
+
+{if $Participants|default:array()|count >0}
 	<br/>
-
-	Kasutaja: {$UserName}<br/>
-	{if !empty($CreatedBy)}
-		Broneerija: {$CreatedBy}
-		<br/>
-	{/if}
-	Algus: {formatdate date=$StartDate key=reservation_email}<br/>
-	Lõpp: {formatdate date=$EndDate key=reservation_email}<br/>
-
-	{if $Resources|default:array()|count > 1}
-		<strong>Ressursid ({$Resources|default:array()|count}):</strong> <br />
-	{else}
-		<strong>Ressurss:</strong><br/>
-	{/if}
-	{foreach from=$Resources item=resource name=resourceLoop}
-		<strong>{$resource.name|escape}</strong><br/>
-		{if $resource.scheduleName}<strong>Graafik:</strong> {$resource.scheduleName|escape}<br/>{/if}
-		<strong>Ressursi ID:</strong> {$resource.id}<br/>
-		{if $resource.location}<strong>Asukoht:</strong> {$resource.location|escape}<br/>{/if}
-		{if $resource.contact}<strong>Kontakt:</strong> {$resource.contact|escape}<br/>{/if}
-		{if $resource.description}<strong>Kirjeldus:</strong> {$resource.description|sanitize_rich_text|url2link|nl2br}<br/>{/if}
-		{if $resource.notes}<strong>Märkused:</strong> {$resource.notes|sanitize_rich_text|url2link|nl2br}<br/>{/if}
-		{if $resource.resourceAdministrator}<strong>Ressursi administraator:</strong> {$resource.resourceAdministrator|escape}<br/>{/if}
-
-		{if $resource.attributeRows|default:array()|count > 0}
-			<strong>Ressursi üksikasjad:</strong><br/>
-			<table cellpadding="4" cellspacing="0" border="1" style="border-collapse: collapse; margin-top: 4px;">
-				{foreach from=$resource.attributeRows item=row}
-					<tr>
-						<th scope="row" valign="top" style="text-align: left;"><strong>{$row.label|escape}</strong></th>
-						<td valign="top">{$row.displayValue|escape|nl2br}</td>
-					</tr>
-				{/foreach}
-			</table>
-		{/if}
-
-		{if $resource.image}
-			<div class="resource-image"><img alt="{$resource.name|escape}" src="{$ScriptUrl}/{$resource.image|escape}"/></div>
-		{/if}
-
-		{if !$smarty.foreach.resourceLoop.last}<br/>{/if}
-	{/foreach}
-
-	Pealkiri: {$Title}<br/>
-	Kirjeldus: {$Description|nl2br}
-
-	{if count($RepeatDates) gt 0}
-		<br/>
-		Broneering esineb järgneval kuupäeval:
-		<br/>
-	{/if}
-
-	{foreach from=$RepeatDates item=date name=dates}
-		{formatdate date=$date}<br/>
-	{/foreach}
-
-	{if $Accessories|default:array()|count > 0}
-		<br/>Accessories:<br/>
-		{foreach from=$Accessories item=accessory}
-			({$accessory->QuantityReserved}) {$accessory->Name}<br/>
-		{/foreach}
-	{/if}
-
-	{if $Attributes|default:array()|count > 0}
-		<br/>
-		{foreach from=$Attributes item=attribute}
-			<div>{control type="AttributeControl" attribute=$attribute readonly=true}</div>
-		{/foreach}
-	{/if}
-
-	{if $RequiresApproval}
-		<br/>
-		One or more of the resources reserved require approval before usage.  Please ensure that this reservation request is approved or rejected.
-	{/if}
-
+	<strong>Osalejad ({$Participants|default:array()|count + $ParticipatingGuests|default:array()|count}):</strong>
 	<br/>
+    {foreach from=$Participants item=user}
+        {$user->FullName()}
+		<br/>
+    {/foreach}
+{/if}
+
+{if $ParticipatingGuests|default:array()|count >0}
+    {foreach from=$ParticipatingGuests item=email}
+        {$email}
+		<br/>
+    {/foreach}
+{/if}
+
+{if $Invitees|default:array()|count >0}
 	<br/>
-	<a href="{$ScriptUrl}/{$ReservationUrl}">Vaata seda broneeringut</a> | <a href="{$ScriptUrl}">Logi sisse Rannahalli kalendrisse</a>
+	<strong>Kutsutud ({$Invitees|default:array()|count + $InvitedGuests|default:array()|count}):</strong>
+	<br/>
+    {foreach from=$Invitees item=user}
+        {$user->FullName()}
+		<br/>
+    {/foreach}
+{/if}
+
+{if $InvitedGuests|default:array()|count >0}
+    {foreach from=$InvitedGuests item=email}
+        {$email}
+		<br/>
+    {/foreach}
+{/if}
+
+{if $Accessories|default:array()|count > 0}
+	<br/>
+	<strong>Lisavahendid ({$Accessories|default:array()|count}):</strong>
+	<br/>
+    {foreach from=$Accessories item=accessory}
+		({$accessory->QuantityReserved}) {$accessory->Name}
+		<br/>
+    {/foreach}
+{/if}
+
+<p><strong>Viitenumber:</strong> {$ReferenceNumber}</p>
+
+<p>
+    <a href="{$ScriptUrl}/{$ReservationUrl}">Vaata seda broneeringut</a> | <a href="{$ScriptUrl}">Logi sisse süsteemi {$AppTitle}</a>
+</p>
+
+{if !$Deleted}
+	<a href="{$ScriptUrl}/{$ReservationUrl}">Vaata seda broneeringut</a>
+	|
+	<a href="{$GoogleCalendarUrl}" target="_blank" rel="nofollow">Lisa Google'i kalendrisse</a>
+	|
+{/if}
