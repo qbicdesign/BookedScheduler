@@ -1,11 +1,11 @@
 <p>{$To},</p>
 
-<p>Uus kasutaja on registreeritud järgmiste andmetega:<br/>
-Email: {$EmailAddress}<br/>
+<p>Uus kasutaja on registreerunud järgmiste andmetega:<br/>
+E-post: {$EmailAddress}<br/>
 Nimi: {$FullName}<br/>
 Telefon: {$Phone}<br/>
-Töökoht: {$Organization}<br/>
-Amet: {$Position}</p>
+Organisatsioon: {$Organization}<br/>
+Ametukoht: {$Position}</p>
 {if !empty($CreatedBy)}
-	Created by: {$CreatedBy}
+	Looja: {$CreatedBy}
 {/if}
