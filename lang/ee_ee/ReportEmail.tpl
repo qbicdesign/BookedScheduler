@@ -1,3 +1,3 @@
-Your report from LibreBooking is attached.<br/><br/>
+Teie aruanne süsteemist {$AppTitle} on manuses.<br/><br/>
 
-<a href="{$ScriptUrl}">Logi sisse Rannahalli kalendrisse</a>
+<a href="{$ScriptUrl}">Logi sisse süsteemi {$AppTitle}</a>
