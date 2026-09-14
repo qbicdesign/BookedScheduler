@@ -1,52 +1,109 @@
-	Reservation Details:
-	<br/>
-	<br/>
+{if $Deleted}
+    <p>{$UserName} tühistas broneeringu</p>
+    {else}
+    <p>{$UserName} lisas Teid broneeringule</p>
+{/if}
 
-	Starting: {formatdate date=$StartDate key=reservation_email}<br/>
-	Ending: {formatdate date=$EndDate key=reservation_email}<br/>
-	{if $ResourceNames|default:array()|count > 1}
-		Resources:<br/>
-		{foreach from=$ResourceNames item=resourceName}
-			{$resourceName}<br/>
-		{/foreach}
-		{else}
-		Resource: {$ResourceName}<br/>
-	{/if}
+{if !empty($DeleteReason)}
+    <p><strong>Kustutamise põhjus:</strong> {$DeleteReason|nl2br}</p>
+{/if}
 
-	{if $ResourceImage}
-		<div class="resource-image"><img src="{$ScriptUrl}/{$ResourceImage}"/></div>
-	{/if}
+<p><strong>Broneeringu andmed:</strong></p>
 
-	Title: {$Title}<br/>
-	Description: {$Description|nl2br}
+<p>
+    <strong>Algus:</strong> {formatdate date=$StartDate key=reservation_email}<br/>
+    <strong>Lõpp:</strong> {formatdate date=$EndDate key=reservation_email}<br/>
+</p>
 
-	{if count($RepeatDates) gt 0}
-		<br/>
-		The reservation occurs on the following dates:
-		<br/>
-	{/if}
+<p>
+{if $ResourceNames|default:array()|count > 1}
+    <strong>Ressursid ({$ResourceNames|default:array()|count}):</strong> <br />
+    {foreach from=$ResourceNames item=resourceName}
+        {$resourceName}<br/>
+    {/foreach}
+{else}
+    <strong>Ressurss:</strong> {$ResourceName}<br/>
+{/if}
+</p>
 
-	{foreach from=$RepeatDates item=date name=dates}
-		{formatdate date=$date}<br/>
-	{/foreach}
+{if $ResourceImage}
+    <div class="resource-image"><img alt="{$ResourceName|escape}" src="{$ScriptUrl}/{$ResourceImage}"/></div>
+{/if}
 
-	{if $Accessories|default:array()|count > 0}
-		<br/>Accessories:<br/>
-		{foreach from=$Accessories item=accessory}
-			({$accessory->QuantityReserved}) {$accessory->Name}<br/>
-		{/foreach}
-	{/if}
+{if $RequiresApproval && !$Deleted}
+    <p>* Vähemalt üks broneeritud ressurssidest vajab enne kasutamist kinnitamist. See broneering on ootel kuni kinnitamiseni. *</p>
+{/if}
 
-	{if $RequiresApproval}
-		<br/>
-		One or more of the resources reserved require approval before usage.  This reservation will be pending until it is approved.
-	{/if}
+<p>
+    <strong>Pealkiri:</strong> {$Title}<br/>
+    <strong>Kirjeldus:</strong> {$Description|nl2br}
+</p>
 
-	<br/>
-	Attending? <a href="{$ScriptUrl}/{$AcceptUrl}">Yes</a> <a href="{$ScriptUrl}/{$DeclineUrl}">No</a>
-	<br/>
-	<br/>
+{if count($RepeatRanges) gt 0}
+    <br/>
+    <strong>Broneering toimub järgmistel kuupäevadel ({$RepeatRanges|default:array()|count}):</strong>
+    <br/>
+{/if}
 
-	<a href="{$ScriptUrl}/{$ReservationUrl}">View this reservation</a> |
-	<a href="{$ScriptUrl}/{$ICalUrl}">Add to Calendar</a> |
-	<a href="{$ScriptUrl}">Log in to LibreBooking</a>
+{foreach from=$RepeatRanges item=date name=dates}
+    {formatdate date=$date->GetBegin()}
+    {if !$date->IsSameDate()} - {formatdate date=$date->GetEnd()}{/if}
+    <br/>
+{/foreach}
+
+{if $Participants|default:array()|count >0}
+    <br />
+    <strong>Osalejad ({$Participants|default:array()|count + $ParticipatingGuests|default:array()|count}):</strong>
+    <br />
+    {foreach from=$Participants item=user}
+        {$user->FullName()}
+        <br/>
+    {/foreach}
+{/if}
+
+{if $ParticipatingGuests|default:array()|count >0}
+    {foreach from=$ParticipatingGuests item=email}
+        {$email}
+        <br/>
+    {/foreach}
+{/if}
+
+{if $Invitees|default:array()|count >0}
+    <br />
+    <strong>Kutsutud ({$Invitees|default:array()|count + $InvitedGuests|default:array()|count}):</strong>
+    <br />
+    {foreach from=$Invitees item=user}
+        {$user->FullName()}
+        <br/>
+    {/foreach}
+{/if}
+
+{if $InvitedGuests|default:array()|count >0}
+    {foreach from=$InvitedGuests item=email}
+        {$email}
+        <br/>
+    {/foreach}
+{/if}
+
+{if $Accessories|default:array()|count > 0}
+    <br />
+       <strong>Lisavahendid ({$Accessories|default:array()|count}):</strong>
+       <br />
+    {foreach from=$Accessories item=accessory}
+        ({$accessory->QuantityReserved}) {$accessory->Name}
+        <br/>
+    {/foreach}
+{/if}
+
+{if !$Deleted && !$Updated}
+<p>
+    <strong>Osalete?</strong> <a href="{$ScriptUrl}/{$AcceptUrl}">Jah</a> <a href="{$ScriptUrl}/{$DeclineUrl}">Ei</a>
+</p>
+{/if}
+
+{if !$Deleted}
+<a href="{$ScriptUrl}/{$ReservationUrl}">Vaata seda broneeringut</a> |
+<a href="{$ScriptUrl}/{$ICalUrl}">Lisa kalendrisse</a> |
+<a href="{$GoogleCalendarUrl}" target="_blank" rel="nofollow">Lisa Google'i kalendrisse</a> |
+{/if}
+<a href="{$ScriptUrl}">Logi sisse süsteemi {$AppTitle}</a>
