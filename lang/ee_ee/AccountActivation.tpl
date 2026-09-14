@@ -1,2 +1,2 @@
 {$FirstName},<br/>
-Thank you for registering with LibreBooking. Please <a href="{$ActivationUrl}">activate your account</a>.
+Täname registreerumast süsteemis {$AppTitle}. Palun <a href="{$ActivationUrl}">aktiveerige oma konto</a>.
